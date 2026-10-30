@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-analyze"
+  short_description: "초기 분석: 요구사항·현재 구현·불확실성·담당자 질문"
+policy:
+  allow_implicit_invocation: false

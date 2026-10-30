@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-data"
+  short_description: "데이터 계약·점검·집계 함정·정직한 평가"
+policy:
+  allow_implicit_invocation: false

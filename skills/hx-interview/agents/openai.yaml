@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-interview"
+  short_description: "담당자 질문 다듬기(check)와 답 기록(record)"
+policy:
+  allow_implicit_invocation: false

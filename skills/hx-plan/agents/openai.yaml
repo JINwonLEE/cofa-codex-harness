@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-plan"
+  short_description: "MVP·완료 기준·시간 기준 계획과 승인"
+policy:
+  allow_implicit_invocation: false

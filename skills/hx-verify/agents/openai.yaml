@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-verify"
+  short_description: "실행 증거로 검증, 통과·실패·미실행 구분"
+policy:
+  allow_implicit_invocation: false

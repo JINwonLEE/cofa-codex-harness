@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-debug"
+  short_description: "재현·원인 가설·최소 수정·10분 보고"
+policy:
+  allow_implicit_invocation: false

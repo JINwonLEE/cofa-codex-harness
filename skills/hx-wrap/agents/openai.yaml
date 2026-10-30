@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-wrap"
+  short_description: "제출 확정 전 점검·공유 메시지·이해도 점검"
+policy:
+  allow_implicit_invocation: false
