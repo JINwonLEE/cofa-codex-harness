@@ -83,6 +83,21 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.root / "home").exists())
         self.assertFalse((self.root / "codex home").exists())
 
+    def test_install_preserves_codex_configuration_auth_and_version_files(self):
+        protected = []
+        for folder in (self.root / "home/.codex", self.root / "codex home"):
+            folder.mkdir(parents=True)
+            for name in ("config.toml", "auth.json", "version.json"):
+                file = folder / name
+                file.write_bytes(b"fixture: must not change\n")
+                protected.append(file)
+        before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in protected}
+        result = self.cli()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.cli("--check")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(before, {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in protected})
+
     def test_reinstall_does_not_rewrite_files_or_duplicate_rules(self):
         self.install()
         before = self.snapshot()
