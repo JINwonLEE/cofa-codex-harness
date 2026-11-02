@@ -13,7 +13,7 @@ BEGIN = b"<!-- cofa-codex-harness:begin -->"
 END = b"<!-- cofa-codex-harness:end -->"
 META = Path(".agents/cofa-codex-harness")
 MANIFEST = META / "manifest.json"
-SKILLS = ("hx-analyze", "hx-data", "hx-debug", "hx-interview", "hx-plan", "hx-verify", "hx-wrap")
+SKILLS = ("hx-analyze", "hx-data", "hx-debug", "hx-design", "hx-interview", "hx-plan", "hx-verify", "hx-wrap")
 
 
 class InstallError(Exception):
@@ -168,7 +168,7 @@ def install(kit, work, check=False, no_agents=False):
     if check:
         if changes:
             raise InstallError("설치 확인 실패: 누락되거나 갱신이 필요한 파일 {}개. --check 없이 다시 실행하세요.".format(len(changes)))
-        print("설치 확인 통과: 스킬 7개·출처·설치 기록" + (" (규칙 확인 제외)" if no_agents else "·자동 적용 규칙"))
+        print("설치 확인 통과: 스킬 {}개·출처·설치 기록".format(len(SKILLS)) + (" (규칙 확인 제외)" if no_agents else "·자동 적용 규칙"))
         return
 
     # Validate all planned writes before changing anything. Do not chmod user files.
@@ -180,7 +180,7 @@ def install(kit, work, check=False, no_agents=False):
     # Each file replacement is atomic; permission errors/interruption are not a whole-tree transaction.
     for path, data in changes:
         atomic_write(path, data)
-    print("설치 완료: {} (변경 {}개, 스킬 7개)".format(work, len(changes)))
+    print("설치 완료: {} (변경 {}개, 스킬 {}개)".format(work, len(changes), len(SKILLS)))
     if not no_agents:
         print("자동 규칙: {} — 기존 본문을 보존했습니다.".format(active_name))
     else:
@@ -194,7 +194,7 @@ def main():
     if sys.version_info < (3, 8):
         print("Python 3.8+가 필요합니다.", file=sys.stderr)
         return 1
-    parser = argparse.ArgumentParser(description="현재 과제 루트에 스킬 7개와 자동 작업 규칙을 설치합니다. 네트워크·설정 변경 없음.")
+    parser = argparse.ArgumentParser(description="현재 과제 루트에 hx- 스킬 전체와 자동 작업 규칙을 설치합니다. 네트워크·설정 변경 없음.")
     parser.add_argument("--project", action="store_true", help="기본 동작과 같음 (이전 명령 호환)")
     parser.add_argument("--check", action="store_true", help="파일 설치 상태만 확인, 쓰기 없음")
     parser.add_argument("--no-agents", action="store_true", help="스킬·출처만 설치; 자동 규칙은 설치/갱신하지 않음")

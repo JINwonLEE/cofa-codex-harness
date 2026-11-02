@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-design"
+  short_description: "핵심 로직 선택지 비교·판별 사례·결정 기록"
+policy:
+  allow_implicit_invocation: false
