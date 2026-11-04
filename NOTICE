@@ -41,6 +41,9 @@ Ideas only (no text copied):
 - mattpocock/skills (MIT) — batched clarifying questions with recommended answers
 - addyosmani/agent-skills (MIT) — small tasks with acceptance criteria
 - obra/superpowers (MIT) — evidence before completion claims (verification-before-completion)
+- bladem0117/cofa-kit (MIT, https://github.com/bladem0117/cofa-kit) — human-intervention log, question angles per decision point (skills/hx-explain, AGENTS.md)
+- CLM-BONNY/cofa-exam-harness (MIT, https://github.com/CLM-BONNY/cofa-exam-harness) — per-feature input→entry→logic→output implementation map (skills/hx-explain)
+- gxonu/sk-probe-kit (no license file; https://github.com/gxonu/sk-probe-kit) — question perspectives only; no text used
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

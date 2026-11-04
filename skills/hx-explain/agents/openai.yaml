@@ -1,0 +1,5 @@
+interface:
+  display_name: "hx-explain"
+  short_description: "구현 지도·결정 카드·코드 근거 질문으로 설명 연습"
+policy:
+  allow_implicit_invocation: false

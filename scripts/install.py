@@ -13,7 +13,7 @@ BEGIN = b"<!-- cofa-codex-harness:begin -->"
 END = b"<!-- cofa-codex-harness:end -->"
 META = Path(".agents/cofa-codex-harness")
 MANIFEST = META / "manifest.json"
-SKILLS = ("hx-analyze", "hx-data", "hx-debug", "hx-design", "hx-interview", "hx-plan", "hx-verify", "hx-wrap")
+SKILLS = ("hx-analyze", "hx-data", "hx-debug", "hx-design", "hx-explain", "hx-interview", "hx-plan", "hx-verify", "hx-wrap")
 
 
 class InstallError(Exception):
