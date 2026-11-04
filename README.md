@@ -55,7 +55,7 @@ install.sh                      과제 폴더에 설치하는 진입점
 scripts/install.py              스킬 복사·규칙 블록 관리·설치 확인 (Python 표준 라이브러리)
 tests/test_install.py           임시 폴더에서만 도는 오프라인 설치 회귀 테스트
 skills/
-  hx-analyze/                   초기 분석: 요구사항·현재 구현·테스트·불확실성 + 담당자 질문 초안
+  hx-analyze/                   초기 분석: 요구사항·현재 구현·테스트·불확실성·핵심 기능 후보 + 담당자 질문 초안
     templates/REQUIREMENTS.md
   hx-interview/                 담당자 질문 다듬기(check), 받은 답 기록(record)
   hx-plan/                      MVP·작업별 완료 기준·시간 기준 계획, 승인 후 진행
@@ -145,7 +145,7 @@ python3 -m unittest discover -s tests -v
 
 | 단계 | 호출 | 결과 |
 |---|---|---|
-| 1. 초기 분석 (코드 수정 없음) | `$hx-analyze` | A~G 보고, REQUIREMENTS.md, 담당자 질문 초안 |
+| 1. 초기 분석 (코드 수정 없음) | `$hx-analyze` | A~H 보고, 핵심 기능 후보·대표 흐름(확정·추정), REQUIREMENTS.md, 담당자 질문 초안(추정이면 1순위로 핵심 기능 확인) |
 | 2. 담당자 확인 | `$hx-interview check` → 직접 전송 → `$hx-interview record` | 답변 기록, 요구·가정 갱신 |
 | 3. 계획 | `$hx-plan` → 승인 | PLAN.md (MVP, 완료 기준, 시간 기준) |
 | 4. 설계 (핵심 로직 작업마다) | `$hx-design` → 선택 | 선택지 표, 판별 사례, DECISIONS.md 결정 기록 |
