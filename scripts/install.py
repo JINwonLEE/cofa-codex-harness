@@ -96,8 +96,15 @@ def atomic_write(path, data):
             os.unlink(temporary)
 
 
-def install(kit, work, check=False, no_agents=False):
-    if work == kit or kit in work.parents or work in kit.parents:
+def install(kit, work, check=False, no_agents=False, user=False):
+    if user:
+        # User scope: only ~/.agents/skills/hx-* and ~/.agents/cofa-codex-harness/. Never project files.
+        work = Path.home().resolve()
+        agents_dir = work / ".agents"
+        if kit == agents_dir or agents_dir in kit.parents:
+            raise InstallError("키트를 ~/.agents 밖에 두세요.")
+        no_agents = True
+    elif work == kit or kit in work.parents or work in kit.parents:
         raise InstallError("키트는 과제 폴더 밖에 두고, 과제 루트에서 실행하세요.")
 
     state_path = safe_path(work, MANIFEST)
@@ -168,7 +175,8 @@ def install(kit, work, check=False, no_agents=False):
     if check:
         if changes:
             raise InstallError("설치 확인 실패: 누락되거나 갱신이 필요한 파일 {}개. --check 없이 다시 실행하세요.".format(len(changes)))
-        print("설치 확인 통과: 스킬 {}개·출처·설치 기록".format(len(SKILLS)) + (" (규칙 확인 제외)" if no_agents else "·자동 적용 규칙"))
+        scope = " (사용자 범위 {})".format(work / ".agents/skills") if user else ""
+        print("설치 확인 통과: 스킬 {}개·출처·설치 기록".format(len(SKILLS)) + (" (규칙 확인 제외)" if no_agents else "·자동 적용 규칙") + scope)
         return
 
     # Validate all planned writes before changing anything. Do not chmod user files.
@@ -181,12 +189,15 @@ def install(kit, work, check=False, no_agents=False):
     for path, data in changes:
         atomic_write(path, data)
     print("설치 완료: {} (변경 {}개, 스킬 {}개)".format(work, len(changes), len(SKILLS)))
-    if not no_agents:
+    if user:
+        print("사용자 범위: {} 에 스킬만 설치했습니다. 과제 폴더와 AGENTS 파일은 건드리지 않았습니다.".format(work / ".agents/skills"))
+        print("규칙은 새 세션에서 $hx-analyze를 처음 부를 때 스킬 안의 RULES.md로 읽습니다.")
+    elif not no_agents:
         print("자동 규칙: {} — 기존 본문을 보존했습니다.".format(active_name))
     else:
         print("--no-agents: 자동 규칙을 설치/갱신하지 않았습니다.")
     print("같은 과제 루트에서 제공된 Codex를 새로 시작하고 /skills를 확인하세요.")
-    check_args = "--check --no-agents" if no_agents else "--check"
+    check_args = "--check --user" if user else "--check --no-agents" if no_agents else "--check"
     print("파일 설치 확인: install.sh {} (실제 Codex 로딩 확인은 별도)".format(check_args))
 
 
@@ -198,9 +209,12 @@ def main():
     parser.add_argument("--project", action="store_true", help="기본 동작과 같음 (이전 명령 호환)")
     parser.add_argument("--check", action="store_true", help="파일 설치 상태만 확인, 쓰기 없음")
     parser.add_argument("--no-agents", action="store_true", help="스킬·출처만 설치; 자동 규칙은 설치/갱신하지 않음")
+    parser.add_argument("--user", action="store_true", help="과제 폴더에 쓸 수 없을 때: ~/.agents/skills에 스킬만 설치 (과제 폴더·AGENTS 파일 미변경)")
     args = parser.parse_args()
+    if args.user and args.project:
+        parser.error("--user와 --project는 함께 쓸 수 없습니다.")
     try:
-        install(Path(__file__).resolve().parent.parent, Path.cwd().resolve(), args.check, args.no_agents)
+        install(Path(__file__).resolve().parent.parent, Path.cwd().resolve(), args.check, args.no_agents, args.user)
     except (InstallError, OSError, ValueError) as error:
         print("중단: {}".format(error), file=sys.stderr)
         return 1

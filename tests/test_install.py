@@ -83,6 +83,40 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((self.root / "home").exists())
         self.assertFalse((self.root / "codex home").exists())
 
+    def test_bundled_rules_copy_matches_agents(self):
+        self.assertEqual((ROOT / "skills/hx-analyze/RULES.md").read_bytes(), (ROOT / "AGENTS.md").read_bytes())
+
+    def test_user_scope_installs_only_under_home(self):
+        agents = self.project / "AGENTS.md"
+        agents.write_bytes(b"# platform rules\n")
+        agents.chmod(0o444)
+        self.project.chmod(0o555)
+        before = self.snapshot()
+        result = self.cli("--user")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(before, self.snapshot())
+        home = self.root / "home"
+        skills = home / ".agents/skills"
+        self.assertEqual({p.name for p in skills.iterdir()}, set(INSTALLER.SKILLS))
+        for name in INSTALLER.SKILLS:
+            self.assertEqual((skills / name / "SKILL.md").read_bytes(), (self.kit / "skills" / name / "SKILL.md").read_bytes())
+        self.assertEqual((skills / "hx-analyze/RULES.md").read_bytes(), (self.kit / "AGENTS.md").read_bytes())
+        self.assertTrue((home / INSTALLER.MANIFEST).is_file())
+        self.assertFalse((home / "AGENTS.md").exists())
+        self.assertFalse((self.root / "codex home").exists())
+        result = self.cli("--check", "--user")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("--check --user", self.cli("--user").stdout)
+
+    def test_user_scope_rejects_kit_inside_home_agents_and_project_flag(self):
+        self.assertNotEqual(self.cli("--user", "--project").returncode, 0)
+        inside = self.root / "home/.agents/kit"
+        shutil.copytree(self.kit, inside)
+        result = subprocess.run(["bash", str(inside / "install.sh"), "--user"], cwd=self.project,
+                                env=dict(os.environ, HOME=str(self.root / "home")), text=True, capture_output=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / "home/.agents/skills").exists())
+
     def test_install_preserves_codex_configuration_auth_and_version_files(self):
         protected = []
         for folder in (self.root / "home/.codex", self.root / "codex home"):
